@@ -1,0 +1,39 @@
+name: Build and Deploy Blazor App
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore ./PlatziWebBlazor.sln
+
+    - name: Build project
+      run: dotnet build ./PlatziWebBlazor.sln --configuration Release --no-restore
+
+    - name: Publish project
+      run: dotnet publish ./PlatziWebBlazor.sln -c Release -o ${{ github.workspace }}/publish_output --no-restore
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: platzi-blazor
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ github.workspace }}/publish_output

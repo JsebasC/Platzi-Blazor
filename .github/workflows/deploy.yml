@@ -28,7 +28,7 @@ jobs:
       run: dotnet build ./PlatziWebBlazor.sln --configuration Release --no-restore
 
     - name: Publish project
-      run: dotnet publish ./PlatziWebBlazor.sln -c Release -o ${{ github.workspace }}/publish_output --no-restore
+      run: dotnet publish ./PlatziWebBlazor.sln -c Release -o ${{ github.workspace }}/publish_output --no-restore    
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
